@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+# -*- mode: sh; coding: utf-8 -*-
+ME="${0##*/}"
+MY_PROMPT='msg> '
+##############################################################################
+# This program is free software; you can redistribute it and/or modify it    #
+# under the terms of the GNU General Public License as published by the Free #
+# Software Foundation; either version 3 of the License, or (at your option)  #
+# any later version.                                                         #
+#                                                                            #
+# This program is distributed in the hope that it will be useful, but with-  #
+# out any warranty; without even the implied warranty of merchantability or  #
+# fitness for a particular purpose.  See the GNU General Public License for  #
+# more details.  <http://gplv3.fsf.org/>                                     #
+##############################################################################
+
+MY_APPNAME='kbmsgr-post'
+MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
+MY_REVISION='2016-08-20'
+MY_VERSION="0.0.1 (${MY_REVISION})"
+MY_COPYRIGHT="\
+kbmsgr-post/${MY_VERSION}
+Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
+
+This is free software; see the source for copying conditions.  There is no
+warranty; not even for merchantability or fitness for a particular purpose.\
+"
+MY_HELP="\
+usage: ${ME} [OPTIONS] <MYFILE>
+
+positional argument:
+  MYFILE            full path of my messages file
+
+options:
+  -h, --help        display this help and exit
+  -v, --version     output version information and exit
+  -c, --copyright   show copying policy and exit\
+"
+
+die () {
+  [[ -n "${1}" ]] && {
+    echo "${@}" >&2
+    exit 1
+  }
+  exit 0
+}
+
+my_help () {
+  echo "${MY_HELP}"
+}
+
+my_version () {
+  echo "${MY_APPNAME}/${MY_VERSION}"
+}
+
+my_copyright () {
+  echo "${MY_COPYRIGHT}"
+}
+
+my_ruler () {
+  local ruler=''
+  local length=8
+  local ten='----+----|'
+  local maxlen="${COLUMNS:-140}"
+  [[ ${maxlen} -gt 140 ]] && maxlen=140
+  while [[ ${length} -lt $((${maxlen}-10)) ]]
+  do
+    ruler="${ruler}${ten}"
+    length="${#ruler}"
+  done
+  clear
+  printf "     ${ruler}\n"
+}
+
+my_post () {
+  local myfile="${1}"
+  local message=''
+  local utcnow
+
+  my_ruler
+  read -e -p "${MY_PROMPT}" -i "${message}" message
+
+  while :
+  do
+    read -n1 -e -p "$(printf "Post \x1b[1m[\x1b[0m${message}\x1b[1m]\x1b[0m? [Y]es/[N]o/[E]dit: ")" answer
+    case "${answer}" in
+      y | Y ) break ;;
+      n | N ) return ;;
+      e | E )
+        my_ruler
+        read -e -p "${MY_PROMPT}" -i "${message}" message
+      ;;
+    esac
+  done
+  [[ -n "${message}" ]] && {
+    utcnow=$(date --utc '+%Y-%m-%dT%H:%M:%SZ')
+    printf '%s\t%s\n' "${utcnow}" "${message}" >> "${myfile}" \
+    && echo "${message}"
+  }
+}
+
+main () {
+  local myfile="${1}"
+
+  case "${1}" in
+    -h | --help )
+      my_help
+      die
+    ;;
+    -v | --version )
+      my_version
+      die
+    ;;
+    -c | --copyright )
+      my_copyright
+      die
+    ;;
+    -* )
+      die "unrecognized option ‘${1}’"
+    ;;
+  esac
+
+  [[ -z "${myfile}" ]] && die "missing positional argument: MYFILE"
+
+  while :
+  do
+    read -n1 -e -p 'Press any key to continue (Q to quit): ' answer
+    case "${answer}" in
+      q | Q )
+        echo 'Quit!'
+        exit 0
+      ;;
+      * )
+        : pass
+      ;;
+    esac
+    clear
+    my_post "${myfile}"
+  done
+}
+
+main "${@}"
+
+:
+# eof
