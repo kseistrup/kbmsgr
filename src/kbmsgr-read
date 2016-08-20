@@ -1,0 +1,208 @@
+#!/usr/bin/python
+# -*- mode: python; coding: utf-8 -*-
+"""
+Usage: kbmsgr-read [OPTIONS]
+  options are:
+    -h, --help ........ show this help text and exit
+    -v, --version ..... print version information and exit
+    -c, --copyright ... show copying policy and exit
+"""
+##############################################################################
+# This program is free software; you can redistribute it and/or modify it    #
+# under the terms of the GNU General Public License as published by the Free #
+# Software Foundation; either version 3 of the License, or (at your option)  #
+# any later version.                                                         #
+#                                                                            #
+# This program is distributed in the hope that it will be useful, but with-  #
+# out any warranty; without even the implied warranty of merchantability or  #
+# fitness for a particular purpose.  See the GNU General Public License for  #
+# more details.  <http://gplv3.fsf.org/>                                     #
+##############################################################################
+
+import sys
+import os
+import re
+import pathlib
+import argparse
+import datetime
+import textwrap
+import pprint
+
+try:
+    from locale import (Error, setlocale, LC_ALL)
+    _ = setlocale(LC_ALL, '')
+except (ImportError, NameError, Error):
+    pass
+
+try:
+    import dateutil.parser
+    import humanize
+except ImportError as error:
+    print(str(error), file=sys.stderr)
+    sys.exit(1)
+
+__author__ = 'Klaus Alexander Seistrup <klaus@seistrup.dk>'
+__revision__ = '2016-08-20'
+__version__ = '0.0.1 ({})'.format(__revision__)
+__copyright__ = """\
+kbmsgr-read {}
+Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
+
+This is free software; see the source for copying conditions.  There is no
+warranty; not even for merchantability or fitness for a particular purpose.\
+""".format(__version__)
+
+DEBUG = os.environ.get('DEBUG', 'False')[0].upper() in '1JTY'  # 1/Ja/True/Yes
+
+ANSI_RE = re.compile('\033\[((?:\d|;)*)([a-zA-Z])')
+
+# ANSI colouring
+BRIGHT = '\x1b[1m'
+DIM = '\x1b[2m'
+WHITE = '\x1b[37m'
+GREEN = '\x1b[32m'
+RESET = '\x1b[0m'
+
+
+def strip_ansi(text):
+    """Strip ANSI escapes"""
+    return ANSI_RE.sub('', text)
+
+
+def die(message=None):
+    """ Exit gracefully"""
+    if message:
+        print(message, file=sys.stderr)
+    sys.exit(1 if message else 0)
+
+
+def debug(head, data):
+    """Possibly pretty print an object to stderr"""
+    if DEBUG:
+        pprint.pprint({head: data}, stream=sys.stderr)
+
+
+def make_aware(dt):
+    """Appends tzinfo and assumes UTC, if datetime object has no tzinfo already."""
+    return dt if dt.tzinfo else dt.replace(tzinfo=datetime.timezone.utc)
+
+
+def parse_iso8601(string):
+    """Parse string using dateutil.parser."""
+    try:
+        dt = make_aware(dateutil.parser.parse(string))
+    except ValueError as error:
+        debug('date', string)
+        return None
+    return dt.astimezone(datetime.timezone.utc)
+
+
+def parse_line(line):
+    """Return a tuple of data from a line"""
+    invalid = (None, None)
+    if line.count('\t') < 1:
+        return invalid
+    (raw_date, text) = line.split('\t', 1)
+    created = parse_iso8601(raw_date)
+    if created is None:
+        return invalid
+    return (created, text.rstrip())
+
+
+def get_lines(fname):
+    """Get all lines from one file"""
+    try:
+        with open(fname, 'r') as fptr:
+            lines = fptr.readlines()
+    except Exception as error:
+        die(str(error))
+    return lines or []
+
+
+def get_all_lines(files):
+    """Read all lines from given files"""
+    for fname in files:
+        name = pathlib.Path(fname).expanduser().name
+        if not name.endswith('.txt'):
+            continue
+        nick = name[:-4]
+        for line in get_lines(fname):
+            (created, text) = parse_line(line)
+            if None not in (created, text):
+                yield (created, nick, text)
+
+
+def showme(data, width=140):
+    """Display a line"""
+    (created, nick, text) = data
+    text = ' '.join(text.split())
+    if not text.isprintable():
+        text = strip_ansi(text)
+        if not text.isprintable():
+            return
+        else:
+            text = ' '.join(text.split())
+    if not text:
+        return
+    now = datetime.datetime.now(datetime.timezone.utc)
+    tense = "from now" if created > now else "ago"
+    when = '{} {}'.format(humanize.naturaldelta(now - created), tense)
+    arrow = '\N{BLACK RIGHTWARDS ARROWHEAD}'
+    header = '{}{}{} {}@{}{} {}({}){}:'.format(
+        BRIGHT + GREEN, arrow, RESET,
+        BRIGHT + WHITE, nick,  RESET,
+        DIM,            when,  RESET
+    )
+    print(header)
+    lines = textwrap.wrap(text, width=width)
+    for line in lines:
+        print('  {}'.format(line))
+
+
+def main(progname='kbmsgr-read'):
+    """Main entry point"""
+
+    debug('argv', sys.argv)
+
+    parser = argparse.ArgumentParser(
+        prog=progname,
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s/{}'.format(__version__),
+                        help='show version information and exit')
+    parser.add_argument('-c', '--copyright', action='version',
+                        version=__copyright__,
+                        help='show copying policy and exit')
+    parser.add_argument('FILE', nargs='+',
+                        help='full path to message file(s)')
+
+    args = parser.parse_args()
+    debug('args', args)
+
+    counter = 0
+    all = []
+    numlines = min(int(os.environ.get('LINES', '999')) / 2, 999) + 1
+    numcols = min(int(os.environ.get('COLUMNS', '140')), 140) - 2
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    delta = datetime.timedelta(seconds=864/2)
+
+    for data in sorted(get_all_lines(args.FILE), reverse=True):
+        (when, _, _) = data
+        if (when - now) > delta:
+            continue
+        all.append(data)
+        counter += 1
+        if counter >= numlines:
+            break
+
+    for data in sorted(all):
+        showme(data, numcols)
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main(pathlib.Path(sys.argv[0]).name))
+
+# eof
