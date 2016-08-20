@@ -26,4 +26,8 @@ directory somewhere in your $PATH, then launch `kbmsgr`
 $ kbmsgr ${my_keybase_username} ${their_keybase_username}
 ```
 
+## Caveat
+
+The is *alpha* quality software, use at your own peril.
+
 :smile:
