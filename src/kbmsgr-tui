@@ -116,7 +116,7 @@ main () {
     || die "cannot create file ‘${theirfile}’"
   }
 
-  start_tmux
+  start_tmux "${myfile}" "${theirfile}"
 }
 
 main "${@}"
