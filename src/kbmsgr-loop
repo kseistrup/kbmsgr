@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+# -*- mode: sh; coding: utf-8 -*-
+ME="${0##*/}"
+##############################################################################
+# This program is free software; you can redistribute it and/or modify it    #
+# under the terms of the GNU General Public License as published by the Free #
+# Software Foundation; either version 3 of the License, or (at your option)  #
+# any later version.                                                         #
+#                                                                            #
+# This program is distributed in the hope that it will be useful, but with-  #
+# out any warranty; without even the implied warranty of merchantability or  #
+# fitness for a particular purpose.  See the GNU General Public License for  #
+# more details.  <http://gplv3.fsf.org/>                                     #
+##############################################################################
+
+MY_APPNAME='kbmsgr-loop'
+MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
+MY_REVISION='2016-08-20'
+MY_VERSION="0.0.1 (${MY_REVISION})"
+MY_COPYRIGHT="\
+kbmsgr-loop/${MY_VERSION}
+Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
+
+This is free software; see the source for copying conditions.  There is no
+warranty; not even for merchantability or fitness for a particular purpose.\
+"
+MY_HELP="
+usage: ${ME} [OPTIONS] <MYFILE> <THEIRFILE>
+
+positional arguments:
+  MYFILE            full path to my messages file
+  THEIRFILE         full path to their messages file
+
+options:
+  -h, --help        display this help and exit
+  -v, --version     output version information and exit
+  -c, --copyright   show copying policy and exit
+"
+
+die () {
+  [[ -n "${1}" ]] && {
+    echo "${ME}:" "${@}" >&2
+    exit 1
+  }
+  exit 0
+}
+
+my_help () {
+  echo "${MY_HELP}"
+}
+
+my_version () {
+  echo "${MY_APPNAME}/${MY_VERSION}"
+}
+
+my_copyright () {
+  echo "${MY_COPYRIGHT}"
+}
+
+loop_forever () {
+  local myfile="${1}"
+  local theirfile="${2}"
+  local delay="${3:-1}"
+
+  local mydate=0
+  local theirdate=0
+  local changed
+
+  local spinner=(▉ ▊ ▋ ▌ ▍ ▎ ▏ ▎ ▍ ▌ ▋ ▊ ▉)
+
+  while :
+  do
+    for i in {52..2}
+    do
+      mychanged=$(stat --format='%Y' "${myfile}")
+      theirchanged=$(stat --format='%Y' "${theirfile}")
+
+      [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
+
+        mydate="${mychaged}"
+        theirdate="${theirchaged}"
+
+        kbmsgr-timeline "${myfile}" "${theirfile}"
+      }
+      idx=$(( $i % 13 ))
+      printf "${spinner[idx]}\r"
+      sleep "${delay}"
+    done
+  done
+}
+
+main () {
+  local myfile="${1}"
+  local theirfile="${2}"
+
+  case "${1}" in
+    -h | --help )
+      my_help
+      die
+    ;;
+    -v | --version )
+      my_version
+      die
+    ;;
+    -c | --copyright )
+      my_copyright
+      die
+    ;;
+    -* )
+      die "unrecognized option ‘${1}’"
+    ;;
+  esac
+
+  [[ -z "${theirfile}" ]] && die 'missing argument: THEIRFILE'
+  [[ -z "${myfile}" ]] && die 'missing argument: MYFILE'
+
+  [[ -f "${myfile}" ]] || {
+    touch "${myfile}" \
+    || die "cannot create file ‘${myfile}’"
+  }
+
+  [[ -f "${theirfile}" ]] || {
+    touch "${theirfile}" \
+    || die "cannot create file ‘${theirfile}’"
+  }
+
+  loop_forever "${myfile}" "${theirfile}"
+}
+
+main "${@}"
+
+:
+# eof
