@@ -60,11 +60,14 @@ my_copyright () {
 
 start_tmux () {
   local myfile="${1}"
-  local hisfile="${2}"
+  local theirfile="${2}"
 
   tmux ls | grep -q '^kbmsgr:' || {
-    tmux new-session  -d -s 'kbmsgr' -n 'kbmsgr' kbmsg-loop "${myfile}" "${theirfile}";
-    tmux split-window -v -l 2 -t 1               kbmsg-post "${myfile}";
+    echo one >&2
+    tmux new-session -d -s 'kbmsgr' -n 'kbmsgr' kbmsgr-loop "${myfile}" "${theirfile}" ;
+    echo two >&2
+    tmux split-window -v -l 2 -t 1              kbmsgr-post "${myfile}" ;
+    echo three >&2
   }
   exec tmux attach -t 'kbmsgr'
 }
@@ -115,7 +118,6 @@ main () {
     touch "${theirfile}" \
     || die "cannot create file ‘${theirfile}’"
   }
-
   start_tmux "${myfile}" "${theirfile}"
 }
 

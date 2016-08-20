@@ -66,11 +66,11 @@ loop_forever () {
   local theirdate=0
   local changed
 
-  local spinner=(▉ ▊ ▋ ▌ ▍ ▎ ▏ ▎ ▍ ▌ ▋ ▊ ▉)
+  local spinner=(🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘)
 
   while :
   do
-    for i in {52..2}
+    for i in {72..2}
     do
       mychanged=$(stat --format='%Y' "${myfile}")
       theirchanged=$(stat --format='%Y' "${theirfile}")
@@ -82,10 +82,12 @@ loop_forever () {
 
         kbmsgr-read "${myfile}" "${theirfile}"
       }
-      idx=$(( $i % 13 ))
-      printf "${spinner[idx]}\r"
+      idx=$(( $i % 8 ))
+      printf '\x1b[K%s \x1b[2m[\x1b[0m\r' "${spinner[idx]}"
       sleep "${delay}"
     done
+    printf '\x1b[K%s \x1b[2m[\x1b[0m\r' "${spinner[1]}"
+    sleep "${delay}"
   done
 }
 
