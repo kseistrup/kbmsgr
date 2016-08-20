@@ -83,10 +83,10 @@ loop_forever () {
         kbmsgr-read "${myfile}" "${theirfile}"
       }
       idx=$(( $i % 8 ))
-      printf '\x1b[K%s \x1b[2m[\x1b[0m\r' "${spinner[idx]}"
+      printf '\x1b[K%s \r' "${spinner[idx]}"
       sleep "${delay}"
     done
-    printf '\x1b[K%s \x1b[2m[\x1b[0m\r' "${spinner[1]}"
+    printf '\x1b[K%s \r' "${spinner[1]}"
     sleep "${delay}"
   done
 }
