@@ -80,7 +80,7 @@ loop_forever () {
         mydate="${mychaged}"
         theirdate="${theirchaged}"
 
-        kbmsgr-timeline "${myfile}" "${theirfile}"
+        kbmsgr-read "${myfile}" "${theirfile}"
       }
       idx=$(( $i % 13 ))
       printf "${spinner[idx]}\r"
