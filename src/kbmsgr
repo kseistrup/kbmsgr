@@ -25,7 +25,7 @@ Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
 This is free software; see the source for copying conditions.  There is no
 warranty; not even for merchantability or fitness for a particular purpose.\
 "
-MY_HELP="
+MY_HELP="\
 usage: ${ME} [OPTIONS] <SELF> <OTHER>
 
 positional arguments:
@@ -35,7 +35,7 @@ positional arguments:
 options:
   -h, --help        display this help and exit
   -v, --version     output version information and exit
-  -c, --copyright   show copying policy and exit
+  -c, --copyright   show copying policy and exit\
 "
 
 die () {
@@ -65,7 +65,7 @@ main () {
   local kbroot='/keybase/private'
   local msgdir
 
-  case "${command}" in
+  case "${1}" in
     -h | --help )
       my_help
       die
@@ -79,7 +79,7 @@ main () {
       die
     ;;
     -* )
-      die "unrecognized option ‘${command}’"
+      die "unrecognized option ‘${1}’"
     ;;
   esac
 
