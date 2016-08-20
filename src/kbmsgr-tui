@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# -*- mode: sh; coding: utf-8 -*-
+ME="${0##*/}"
+##############################################################################
+# This program is free software; you can redistribute it and/or modify it    #
+# under the terms of the GNU General Public License as published by the Free #
+# Software Foundation; either version 3 of the License, or (at your option)  #
+# any later version.                                                         #
+#                                                                            #
+# This program is distributed in the hope that it will be useful, but with-  #
+# out any warranty; without even the implied warranty of merchantability or  #
+# fitness for a particular purpose.  See the GNU General Public License for  #
+# more details.  <http://gplv3.fsf.org/>                                     #
+##############################################################################
+
+MY_APPNAME='kbmsgr-tui'
+MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
+MY_REVISION='2016-08-20'
+MY_VERSION="0.0.1 (${MY_REVISION})"
+MY_COPYRIGHT="\
+kbmsgr-tui/${MY_VERSION}
+Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
+
+This is free software; see the source for copying conditions.  There is no
+warranty; not even for merchantability or fitness for a particular purpose.\
+"
+MY_HELP="
+usage: ${ME} [OPTIONS] <SELF> <OTHER> <DIRECTORY>
+
+positional arguments:
+  SELF              your keybase username
+  OTHER             recipient's keybase username
+  DIRECTORY         keybase directory that holds our messages
+
+options:
+  -h, --help        display this help and exit
+  -v, --version     output version information and exit
+  -c, --copyright   show copying policy and exit
+"
+
+die () {
+  [[ -n "${1}" ]] && {
+    echo "${ME}:" "${@}" >&2
+    exit 1
+  }
+  exit 0
+}
+
+my_help () {
+  echo "${MY_HELP}"
+}
+
+my_version () {
+  echo "${MY_APPNAME}/${MY_VERSION}"
+}
+
+my_copyright () {
+  echo "${MY_COPYRIGHT}"
+}
+
+start_tmux () {
+  local myfile="${1}"
+  local hisfile="${2}"
+
+  tmux ls | grep -q '^kbmsgr:' || {
+    tmux new-session  -d -s 'kbmsgr' -n 'kbmsgr' kbmsg-loop "${myfile}" "${theirfile}";
+    tmux split-window -v -l 2 -t 1               kbmsg-post "${myfile}";
+  }
+  exec tmux attach -t 'kbmsgr'
+}
+
+main () {
+  local self="${1}"
+  local other="${2}"
+  local msgdir="${3}"
+  local myfile
+  local theirfile
+
+  case "${1}" in
+    -h | --help )
+      my_help
+      die
+    ;;
+    -v | --version )
+      my_version
+      die
+    ;;
+    -c | --copyright )
+      my_copyright
+      die
+    ;;
+    -* )
+      die "unrecognized option ‘${1}’"
+    ;;
+  esac
+
+  [[ -z "${other}" ]] && die 'missing argument: OTHER'
+  [[ -z "${self}" ]] && die 'missing argument: SELF'
+  [[ -z "${msgdir}" ]] && die 'missing argument: DIRECTORY'
+
+  [[ -d "${msgdir}" ]] || {
+    mkdir -p "${msgdir}" \
+    || die "cannot create directory ‘${msgdir}’"
+  }
+
+  myfile="${msgdir}/${self}.txt"
+  theirfile="${msgdir}/${other}.txt"
+
+  [[ -f "${myfile}" ]] || {
+    touch "${myfile}" \
+    || die "cannot create file ‘${myfile}’"
+  }
+
+  [[ -f "${theirfile}" ]] || {
+    touch "${theirfile}" \
+    || die "cannot create file ‘${theirfile}’"
+  }
+
+  start_tmux
+}
+
+main "${@}"
+
+# eof
