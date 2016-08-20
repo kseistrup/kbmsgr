@@ -17,7 +17,7 @@ storage-medium.
 ## Quickstart
 
 Put all of the scripts from the
-[…/src](https://github.com/kseistrup/kbmsgr/tree/master/src]
+[…/src](https://github.com/kseistrup/kbmsgr/tree/master/src)
 directory somewhere in your $PATH, then launch `kbmsgr`
 (`/keybase` should be mounted, of course):
 
