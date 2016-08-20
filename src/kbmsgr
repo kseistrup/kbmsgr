@@ -107,11 +107,6 @@ main () {
   die "cannot find ${tui}"
 }
 
-: "${COLUMNS:=80}" ; export COLUMNS
-: "${LINES:=25}"   ; export LINES
-
-echo "${COLUMNS}×${LINES}"
-
 main "${@}"
 
 :
