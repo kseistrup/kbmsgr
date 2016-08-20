@@ -26,17 +26,16 @@ This is free software; see the source for copying conditions.  There is no
 warranty; not even for merchantability or fitness for a particular purpose.\
 "
 MY_HELP="
-usage: ${ME} [OPTIONS] <COMMAND> <SELF> <OTHER> [ARGUMENTS]
+usage: ${ME} [OPTIONS] <SELF> <OTHER>
 
-commands are:
-  tui  <SELF> <OTHER>          start interactive text user interface
-  read <SELF> <OTHER>          dump timeline and exit
-  post <SELF> <OTHER> [TEXT]   post TEXT from SELF to OTHER
+positional arguments:
+  SELF              your keybase username
+  OTHER             recipient's keybase username
 
-options are:
-  -h, --help                   display this help and exit
-  -v, --version                output version information and exit
-  -c, --copyright              show copying policy and exit
+options:
+  -h, --help        display this help and exit
+  -v, --version     output version information and exit
+  -c, --copyright   show copying policy and exit
 "
 
 die () {
@@ -60,10 +59,11 @@ my_copyright () {
 }
 
 main () {
-  local command="${1:-tui}"
-  local self="${2}"
-  local other="${3}"
-  local extension="${MYPATH}-${command}"
+  local tui="${MYPATH}-tui"
+  local self="${1}"
+  local other="${2}"
+  local kbroot='/keybase/private'
+  local msgdir
 
   case "${command}" in
     -h | --help )
@@ -81,22 +81,30 @@ main () {
     -* )
       die "unrecognized option ‘${command}’"
     ;;
-    "tui" | "read" | "post" )
-      : pass
-    ;;
-    * )
-      die "${MY_HELP}"
-    ;;
   esac
 
   [[ -z "${other}" ]] && die 'missing positional argument: OTHER'
   [[ -z "${self}" ]] && die 'missing positional argument: SELF'
 
-  [[ -x "${extension}" ]] && {
-    shift
-    exec "${extension}" "${@}"
+  if [[ -d "${kbroot}/${other},${self}/." ]]; then
+    msgdir="${kbroot}/${other},${self}/messages"
+  else
+    msgdir="${kbroot}/${self},${other}/messages"
+  fi
+
+  [[ -d "${msgdir}" ]] || {
+    mkdir -p "${msgdir}" \
+    || die "cannot create directory ‘${msgdir}’"
+    touch "${msgdir}/${self}.txt" \
+    || die "cannot create file ‘${msgdir}/${self}.txt’"
+    touch "${msgdir}/${other}.txt" \
+    || die "cannot create file ‘${msgdir}/${other}.txt’"
   }
-  die "cannot find ${extension}"
+
+  [[ -x "${tui}" ]] && {
+    exec "${tui}" "${self}" "${other}" "${msgdir}"
+  }
+  die "cannot find ${tui}"
 }
 
 main "${@}"
