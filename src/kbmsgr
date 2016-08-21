@@ -2,6 +2,7 @@
 # -*- mode: sh; coding: utf-8 -*-
 ME="${0##*/}"
 MYPATH="${0}"
+KBROOT='/keybase/private'
 ##############################################################################
 # This program is free software; you can redistribute it and/or modify it    #
 # under the terms of the GNU General Public License as published by the Free #
@@ -16,7 +17,7 @@ MYPATH="${0}"
 
 MY_APPNAME='kbmsgr'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-20'
+MY_REVISION='2016-08-21'
 MY_VERSION="0.0.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr/${MY_VERSION}
@@ -62,7 +63,7 @@ main () {
   local tui="${MYPATH}-tui"
   local self="${1}"
   local other="${2}"
-  local kbroot='/keybase/private'
+  local kbroot="${KBROOT}"
   local msgdir
 
   case "${1}" in
