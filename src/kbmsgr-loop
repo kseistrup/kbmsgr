@@ -15,7 +15,7 @@ ME="${0##*/}"
 
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-20'
+MY_REVISION='2016-08-21'
 MY_VERSION="0.0.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
@@ -66,7 +66,7 @@ loop_forever () {
   local theirdate=0
   local changed
 
-  local spinner=(🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘)
+  local spinner=(◐ ◓ ◑ ◒)
 
   while :
   do
@@ -82,7 +82,7 @@ loop_forever () {
 
         kbmsgr-read "${myfile}" "${theirfile}"
       }
-      idx=$(( $i % 8 ))
+      idx=$(( $i % 4 ))
       printf '\x1b[K%s \r' "${spinner[idx]}"
       sleep "${delay}"
     done
