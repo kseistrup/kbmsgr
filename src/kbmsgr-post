@@ -38,11 +38,16 @@ options:
 "
 
 die () {
+  rc=0
   [[ -n "${1}" ]] && {
     echo "${ME}:" "${@}" >&2
-    exit 1
+    rc=1
   }
-  exit 0
+  # Kill entire session if it exists
+  tmux ls | grep -q '^kbmsgr:' && {
+    tmux kill-session -t 'kbmsgr' || :
+  }
+  exit "${rc}"
 }
 
 my_help () {
@@ -129,7 +134,7 @@ main () {
     case "${answer}" in
       q | Q )
         echo 'Quit!'
-        exit 0
+        die
       ;;
       * )
         : pass
