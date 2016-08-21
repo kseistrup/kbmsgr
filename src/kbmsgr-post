@@ -39,7 +39,7 @@ options:
 
 die () {
   [[ -n "${1}" ]] && {
-    echo "${@}" >&2
+    echo "${ME}:" "${@}" >&2
     exit 1
   }
   exit 0
