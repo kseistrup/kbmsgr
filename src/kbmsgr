@@ -87,6 +87,8 @@ main () {
   [[ -z "${other}" ]] && die 'missing positional argument: OTHER'
   [[ -z "${self}" ]] && die 'missing positional argument: SELF'
 
+  [[ -d "${kbroot}" ]] || die "no such directory: ${kbroot}"
+
   if [[ -d "${kbroot}/${other},${self}/." ]]; then
     msgdir="${kbroot}/${other},${self}/messages"
   else
