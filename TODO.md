@@ -8,5 +8,5 @@
 
 ### Suggestions
 
-If you feel something is missing, please open an issue on
-[Github](https://github.com/kseistrup/kbmsgr/issues).
+If you feel something is missing, please
+[open an issue](https://github.com/kseistrup/kbmsgr/issues).
