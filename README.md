@@ -1,10 +1,10 @@
 # KBFS messenger (proof of concept)
 
-A handful of shell- and python-scripts that allows you to communicate
-securely (sign and encrypt) with somebody, using the
-[Keybase](https://keybase.io/) filesystem
-([KBFS](https://keybase.io/docs/kbfs))
-as transport- and storage-medium.
+Inspired by the [twtxt](https://github.com/buckket/twtxt) file format, here's
+a handful of shell- and python-scripts that will let you communicate securely
+(sign and encrypt) with somebody, using the [Keybase](https://keybase.io/)
+filesystem ([KBFS](https://keybase.io/docs/kbfs)) as transport- and
+storage-medium.
 
 ## Requirements
 
