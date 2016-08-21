@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- mode: sh; coding: utf-8 -*-
 ME="${0##*/}"
-MY_PROMPT='msg> '
+MY_PROMPT='text> '
 ##############################################################################
 # This program is free software; you can redistribute it and/or modify it    #
 # under the terms of the GNU General Public License as published by the Free #
@@ -69,7 +69,7 @@ my_ruler () {
     length="${#ruler}"
   done
   clear
-  printf "     ${ruler}\n"
+  printf "      ${ruler}\n"
 }
 
 my_post () {
