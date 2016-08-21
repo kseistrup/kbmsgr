@@ -16,7 +16,7 @@ MY_PROMPT='msg> '
 
 MY_APPNAME='kbmsgr-post'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-20'
+MY_REVISION='2016-08-21'
 MY_VERSION="0.0.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-post/${MY_VERSION}
@@ -124,6 +124,7 @@ main () {
 
   while :
   do
+    clear
     read -n1 -e -p 'Press any key to continue (Q to quit): ' answer
     case "${answer}" in
       q | Q )
@@ -134,7 +135,6 @@ main () {
         : pass
       ;;
     esac
-    clear
     my_post "${myfile}"
   done
 }
