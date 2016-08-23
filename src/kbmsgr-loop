@@ -71,7 +71,7 @@ loop_forever () {
 
   while :
   do
-    for i in {72..2}
+    for i in {8..2}
     do
       mychanged=$(stat --format='%Y' "${myfile}")
       theirchanged=$(stat --format='%Y' "${theirfile}")
