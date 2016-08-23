@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- mode: python; coding: utf-8 -*-
 """
 Usage: kbmsgr-read [OPTIONS]
