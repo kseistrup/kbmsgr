@@ -28,6 +28,6 @@ $ kbmsgr ${my_keybase_username} ${their_keybase_username}
 
 ## Caveat
 
-The is *alpha* quality software, use at your own peril.
+This is *alpha* quality software, use at your own peril.
 
 :smile:
