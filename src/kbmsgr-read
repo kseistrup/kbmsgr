@@ -42,7 +42,7 @@ except ImportError as error:
     sys.exit(1)
 
 __author__ = 'Klaus Alexander Seistrup <klaus@seistrup.dk>'
-__revision__ = '2016-08-20'
+__revision__ = '2016-08-23'
 __version__ = '0.0.1 ({})'.format(__revision__)
 __copyright__ = """\
 kbmsgr-read {}
@@ -54,7 +54,7 @@ warranty; not even for merchantability or fitness for a particular purpose.\
 
 DEBUG = os.environ.get('DEBUG', 'False')[0].upper() in '1JTY'  # 1/Ja/True/Yes
 
-ANSI_RE = re.compile('\033\[((?:\d|;)*)([a-zA-Z])')
+ANSI_RE = re.compile(r'\033\[((?:\d|;)*)([a-zA-Z])')
 
 # ANSI colouring
 BRIGHT = '\x1b[1m'
@@ -92,7 +92,7 @@ def parse_iso8601(string):
     try:
         dt = make_aware(dateutil.parser.parse(string))
     except ValueError as error:
-        debug('date', string)
+        debug('date', (string, str(error)))
         return None
     return dt.astimezone(datetime.timezone.utc)
 
@@ -181,7 +181,7 @@ def main(progname='kbmsgr-read'):
     debug('args', args)
 
     counter = 0
-    all = []
+    messages = []
     numlines = min(int(os.environ.get('LINES', '999')) / 2, 999) + 1
     numcols = min(int(os.environ.get('COLUMNS', '140')), 140) - 2
 
@@ -192,12 +192,12 @@ def main(progname='kbmsgr-read'):
         (when, _, _) = data
         if (when - now) > delta:
             continue
-        all.append(data)
+        messages.append(data)
         counter += 1
         if counter >= numlines:
             break
 
-    for data in sorted(all):
+    for data in sorted(messages):
         showme(data, numcols)
 
     return 0
