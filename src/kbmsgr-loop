@@ -15,7 +15,7 @@ ME="${0##*/}"
 
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-21'
+MY_REVISION='2016-08-23'
 MY_VERSION="0.0.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
@@ -64,7 +64,8 @@ loop_forever () {
 
   local mydate=0
   local theirdate=0
-  local changed
+  local mychanged
+  local theirchanged
 
   local spinner=(◐ ◓ ◑ ◒)
 
@@ -77,12 +78,12 @@ loop_forever () {
 
       [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
 
-        mydate="${mychaged}"
-        theirdate="${theirchaged}"
+        mydate="${mychanged}"
+        theirdate="${theirchanged}"
 
         kbmsgr-read "${myfile}" "${theirfile}"
       }
-      idx=$(( $i % 4 ))
+      idx=$((i % 4))
       printf '\x1b[K%s \r' "${spinner[idx]}"
       sleep "${delay}"
     done

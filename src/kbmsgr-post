@@ -16,7 +16,7 @@ MY_PROMPT='text> '
 
 MY_APPNAME='kbmsgr-post'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-21'
+MY_REVISION='2016-08-23'
 MY_VERSION="0.0.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-post/${MY_VERSION}
@@ -68,13 +68,13 @@ my_ruler () {
   local ten='----+----|'
   local maxlen="${COLUMNS:-140}"
   [[ ${maxlen} -gt 140 ]] && maxlen=140
-  while [[ ${length} -lt $((${maxlen}-10)) ]]
+  while [[ ${length} -lt $((maxlen-10)) ]]
   do
     ruler="${ruler}${ten}"
     length="${#ruler}"
   done
   clear
-  printf "      ${ruler}\n"
+  printf '      %s\n' "${ruler}"
 }
 
 my_post () {
@@ -83,17 +83,17 @@ my_post () {
   local utcnow
 
   my_ruler
-  read -e -p "${MY_PROMPT}" -i "${message}" message
+  read -r -e -p "${MY_PROMPT}" -i "${message}" message
 
   while :
   do
-    read -n1 -e -p "$(printf "Post \x1b[1m[\x1b[0m${message}\x1b[1m]\x1b[0m? [Y]es/[N]o/[E]dit: ")" answer
+    read -n1 -r -e -p "$(printf 'Post \x1b[1m[\x1b[0m%s\x1b[1m]\x1b[0m? [Y]es/[N]o/[E]dit: ' "${message}")" answer
     case "${answer}" in
       y | Y ) break ;;
       n | N ) return ;;
       e | E )
         my_ruler
-        read -e -p "${MY_PROMPT}" -i "${message}" message
+        read -r -e -p "${MY_PROMPT}" -i "${message}" message
       ;;
     esac
   done
@@ -130,7 +130,7 @@ main () {
   while :
   do
     clear
-    read -n1 -e -p 'Press any key to continue (Q to quit): ' answer
+    read -n1 -r -e -p 'Press any key to continue (Q to quit): ' answer
     case "${answer}" in
       q | Q )
         echo 'Quit!'
