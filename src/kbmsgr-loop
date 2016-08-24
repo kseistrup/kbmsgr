@@ -16,7 +16,7 @@ ME="${0##*/}"
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2016-08-23'
-MY_VERSION="0.0.1 (${MY_REVISION})"
+MY_VERSION="0.1.0 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
 Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
@@ -36,6 +36,11 @@ options:
   -v, --version     output version information and exit
   -c, --copyright   show copying policy and exit
 "
+SPINNER=(◐ ◓ ◑ ◒)
+SPINNER_LEN="${#SPINNER[@]}"
+
+RED=$(echo -e '\x1b[31m')
+GREEN=$(echo -e '\x1b[32m')
 
 die () {
   [[ -n "${1}" ]] && {
@@ -57,6 +62,13 @@ my_copyright () {
   echo "${MY_COPYRIGHT}"
 }
 
+spinner () {
+  local colour="${1}"
+  local char="${2:-?}"
+  
+  printf '\x1b[K%s%s\x1b[0m \r' "${colour}" "${char}"
+}
+
 loop_forever () {
   local myfile="${1}"
   local theirfile="${2}"
@@ -66,28 +78,25 @@ loop_forever () {
   local theirdate=0
   local mychanged
   local theirchanged
+  local index=0
 
-  local spinner=(◐ ◓ ◑ ◒)
+  spinner "${GREEN}" "${SPINNER[index]}"
 
   while :
   do
-    for i in {8..2}
-    do
-      mychanged=$(stat --format='%Y' "${myfile}")
-      theirchanged=$(stat --format='%Y' "${theirfile}")
+    mychanged=$(stat --format='%Y' "${myfile}")
+    theirchanged=$(stat --format='%Y' "${theirfile}")
 
-      [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
+    [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
+      spinner "${RED}" "${SPINNER[index]}"
 
-        mydate="${mychanged}"
-        theirdate="${theirchanged}"
+      mydate="${mychanged}"
+      theirdate="${theirchanged}"
 
-        kbmsgr-read "${myfile}" "${theirfile}"
-      }
-      idx=$((i % 4))
-      printf '\x1b[K%s \r' "${spinner[idx]}"
-      sleep "${delay}"
-    done
-    printf '\x1b[K%s \r' "${spinner[1]}"
+      kbmsgr-read "${myfile}" "${theirfile}"
+    }
+    spinner "${GREEN}" "${SPINNER[index]}"
+    index=$(((index + 1) % SPINNER_LEN))
     sleep "${delay}"
   done
 }
