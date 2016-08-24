@@ -17,11 +17,11 @@ KBROOT='/keybase/private'
 
 MY_APPNAME='kbmsgr'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-21'
+MY_REVISION='2016-08-24'
 MY_VERSION="0.0.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr/${MY_VERSION}
-Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
+Copyright © 2016 ${MY_AUTHOR}
 
 This is free software; see the source for copying conditions.  There is no
 warranty; not even for merchantability or fitness for a particular purpose.\
