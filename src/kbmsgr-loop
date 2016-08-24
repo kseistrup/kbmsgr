@@ -16,7 +16,7 @@ ME="${0##*/}"
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2016-08-24'
-MY_VERSION="0.1.0 (${MY_REVISION})"
+MY_VERSION="0.1.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
@@ -39,8 +39,8 @@ options:
 SPINNER=(◐ ◓ ◑ ◒)
 SPINNER_LEN="${#SPINNER[@]}"
 
-RED=$(echo -e '\x1b[31m')
-GREEN=$(echo -e '\x1b[32m')
+#RED=$(echo -e '\x1b[31m')
+#GREEN=$(echo -e '\x1b[32m')
 WHITE=$(echo -e '\x1b[37m')
 
 die () {
@@ -65,38 +65,45 @@ my_copyright () {
 
 spinner () {
   local colour="${1}"
-  local char="${2:-?}"
-  
-  printf '\x1b[K%s%s\x1b[0m \r' "${colour}" "${char}"
+  local char="${2}"
+  local seconds="${3}"
+  local plur='s'
+
+  [[ ${seconds} -eq 1 ]] && plur=''
+
+  printf '\x1b[K\x1b[%s%s\x1b[0m \x1b[2m[\x1b[0mNext update in %s second%s\x1b[2m]\x1b[0m\r' "${colour}" "${char}" "${seconds}" "${plur}"
 }
 
 loop_forever () {
   local myfile="${1}"
   local theirfile="${2}"
-  local delay="${3:-1}"
 
   local mydate=0
   local theirdate=0
-  local index=0
+  local index
   local mychanged
   local theirchanged
 
   while :
   do
-    mychanged=$(stat --format='%Y' "${myfile}")
-    theirchanged=$(stat --format='%Y' "${theirfile}")
+    for i in {59..2}
+    do
+      mychanged=$(stat --format='%Y' "${myfile}")
+      theirchanged=$(stat --format='%Y' "${theirfile}")
 
-    [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
-      mydate="${mychanged}"
-      theirdate="${theirchanged}"
+      [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
+        mydate="${mychanged}"
+        theirdate="${theirchanged}"
 
-      spinner "${RED}" "${SPINNER[index]}"
-      kbmsgr-read "${myfile}" "${theirfile}"
-      spinner "${RED}" "${SPINNER[index]}"
-    }
-    sleep "${delay}"
-    spinner "${WHITE}" "${SPINNER[index]}"
-    index=$(((index + 1) % SPINNER_LEN))
+        kbmsgr-read "${myfile}" "${theirfile}"
+      }
+      index=$((i % SPINNER_LEN))
+      spinner "${WHITE}" "${SPINNER[index]}" "${i}"
+      sleep 1
+    done
+    spinner "${WHITE}" "${SPINNER[1]}" 1
+    sleep 1
+    kbmsgr-read "${myfile}" "${theirfile}"
   done
 }
 
