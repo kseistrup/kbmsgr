@@ -1,26 +1,71 @@
 #!/bin/sh
 #
-# KBMSGR installation (copy) script.
+# KBMSGR installation script.
 #
 # Dedicated to lazy people =P
 # By Musickiller.
 #
-# License: you can only use and redistribute this one *ONLY* if you are lazy or if it is 23'rd of August.
+# License: you can only use and redistribute this one *ONLY* if you are # lazy or if it is 24'th of August.
 #
-# By the way, I make a prompt for the install folder and save into ~/.config/kbmsgr and in uninstall I
-# would use that folder. Yes, that summs up what I can do in shell now.
+# ToDo:
 #
-# oh, wait.. I don't know how to read from stdin... I'm useless =(
-#
-# But I make good ideas. And long descriptions. =P
-# And I cantually can read from a parameter, so it's not a big deal that I can't read from stdin ^_^
-#
-# Very long descriptions!
-#
-# I will delete it later... Just don't have much to do now, while memtest is running on Arch...
+# 1. A parameter check for an install folder, with defauld set as
+# /usr/local/bin and cofig file in ~/.config/kbmsgr
 
-cp -v ../src/kbmsg* /usr/local/bin/
+# VARIABLES
+CONF_DIR=~/.config/kbmsgr/uninstall
+INST_DIR=/usr/local/bin
+GIT_DIR=../src
 
-# yes, it's one line now... but it works!
+
+# FUNCTIONS
+install () {
+	echo "\nInstalling...\n"
+
+	# Make a folder for installation data
+	mkdir -p $CONF_DIR
+	
+	# Save installation parameters:
+	echo "$INST_DIR" > $CONF_DIR/inst_dir.conf
+	
+	# List all files to install
+	FILES=`ls $GIT_DIR | grep kbmsgr`
+
+	# Write the list (to know what to install)
+	# ...and opy files.
+	for FILE in $FILES; do
+		echo "$FILE" >> $CONF_DIR/files.conf
+		cp -v $GIT_DIR/$FILE $INST_DIR
+	done 
+	
+	echo "\nDone!\n"
+}
+
+#Checking for old installations
+check2 () { # tabulation is broken, coz I'm lazy and in gedit.
+if [ -f $CONF_DIR/files.conf ]
+	then echo "ERROR: an installation exists - aborting!\
+	Use update.sh or uninstall.sh instead!"
+	exit 2
+	else
+		echo "No previous installation detected, good."
+		install
+fi
+}
+
+# Checking for root access
+check1 () {
+	#echo "\n"
+	if [ "$(whoami)" != "root" ]
+	then
+		echo "You must be a root user to run $0" 2>&1
+		exit 1
+	else
+		echo "$0 is being run as root, good."
+		check2
+	fi
+}
+
+check1
 
 #eof
