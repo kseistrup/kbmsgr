@@ -10,13 +10,15 @@
 # ToDo:
 #
 # 1. A parameter check for an install folder, with defauld set as
-# /usr/local/bin and cofig file in ~/.config/kbmsgr
+# /usr/local/bin and config file in ~/.config/kbmsgr
+#
+# 2. bash -c '[[ -w /usr/local/bin ]] || echo "no way, josé"'
 
 # VARIABLES
 CONF_DIR=~/.config/kbmsgr/uninstall
 INST_DIR=/usr/local/bin
 GIT_DIR=../src
-
+STOP=0
 
 # FUNCTIONS
 install () {
@@ -44,8 +46,8 @@ install () {
 #Checking for old installations
 check2 () { # tabulation is broken, coz I'm lazy and in gedit.
 if [ -f $CONF_DIR/files.conf ]
-	then echo "ERROR: an installation exists - aborting!\
-	Use update.sh or uninstall.sh instead!"
+	then echo "\nERROR: an installation exists - aborting!
+Use update.sh or uninstall.sh instead!\n"
 	exit 2
 	else
 		echo "No previous installation detected, good."
@@ -56,16 +58,59 @@ fi
 # Checking for root access
 check1 () {
 	#echo "\n"
-	if [ "$(whoami)" != "root" ]
+	if [ -w $INST_DIR ]
 	then
-		echo "You must be a root user to run $0" 2>&1
-		exit 1
-	else
-		echo "$0 is being run as root, good."
+		echo "\nHave access to $INST_DIR"
 		check2
+	else
+		echo "\nYou don't have access to $INST_DIR - aborting!\n" 2>&1
+		exit 1
 	fi
 }
 
-check1
+
+show_help () {
+	echo "HELP!!!!"
+}
+
+
+# A Mysterious Function!
+param_pam_pam () {
+
+	PARAMS=`getopt -o d:c:h --long ins-dir:,conf-dir:,help -n 'install.sh' -- "${@}"`
+	
+	eval set -- "${PARAMS}"
+	
+	
+#	TEMP=`getopt -o a::bc: --long arga::,argb,argc: -n 'test.sh' -- "$@"`
+#eval set -- "$TEMP"
+	
+	
+	
+	
+# extract options and their arguments into variables.
+while true ; do
+    case "$1" in
+        -d|--ins-dir)
+            case "$2" in
+                "") shift 2 ;;
+                *) INST_DIR=${2} ; shift 2 ;;
+            esac ;;
+        -c|--conf-dir)
+            case "$2" in
+                "") shift 2 ;;
+                *) CONF_DIR=${2} ; shift 2 ;;
+            esac ;;
+        -h|--help) show_help ; STOP=1; shift ;;
+        --) shift ; break ;;
+        *) $STOP=1; echo "--help for help" ; exit 3 ;;
+    esac
+done
+}
+
+
+param_pam_pam "${@}"
+if [ ! ${STOP} != 0 ] ; then check1; else exit 5 ; fi
+
 
 #eof
