@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # KBMSGR installation (copy) script.
 #
@@ -18,7 +19,7 @@
 #
 # I will delete it later... Just don't have much to do now, while memtest is running on Arch...
 
-sudo cp -v ./src/* /usr/local/bin/
+cp -v ../src/kbmsg* /usr/local/bin/
 
 # yes, it's one line now... but it works!
 
