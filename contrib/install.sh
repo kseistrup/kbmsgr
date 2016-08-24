@@ -5,16 +5,26 @@
 # Dedicated to lazy people =P
 # By Musickiller.
 #
-# License: you can only use and redistribute this one *ONLY* if you are # lazy or if it is 24'th of August.
+# License: you can only use and redistribute this one *ONLY* if you
+# are lazy or if it is 24'th of August. And NEVER ask me how it works!
 #
 # ToDo:
 #
-# 1. A parameter check for an install folder, with defauld set as
-# /usr/local/bin and config file in ~/.config/kbmsgr
-#
-# 2. bash -c '[[ -w /usr/local/bin ]] || echo "no way, josé"'
+# 1. bash -c '[[ -w /usr/local/bin ]] || echo "no way, josé"'
 
 # VARIABLES
+ME="${0##*/}"
+MYPATH="${0}"
+MY_HELP="\
+usage: ${ME} [options]
+
+options:
+    --inst-dir  -d <dirrecory>  change installation dirrectory
+                                (default - /usr/local/bin)
+    --conf-dit  -c <dirrecory>  change uninstaller's data directory
+                                (default - ~/.config/kbmsgr/uninstall)
+    --help      -h              display help and exit
+"
 CONF_DIR=~/.config/kbmsgr/uninstall
 INST_DIR=/usr/local/bin
 GIT_DIR=../src
@@ -70,7 +80,7 @@ check1 () {
 
 
 show_help () {
-	echo "HELP!!!!"
+	echo "${MY_HELP}"
 }
 
 
@@ -78,16 +88,8 @@ show_help () {
 param_pam_pam () {
 
 	PARAMS=`getopt -o d:c:h --long ins-dir:,conf-dir:,help -n 'install.sh' -- "${@}"`
-	
 	eval set -- "${PARAMS}"
-	
-	
-#	TEMP=`getopt -o a::bc: --long arga::,argb,argc: -n 'test.sh' -- "$@"`
-#eval set -- "$TEMP"
-	
-	
-	
-	
+		
 # extract options and their arguments into variables.
 while true ; do
     case "$1" in

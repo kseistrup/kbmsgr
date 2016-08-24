@@ -5,25 +5,31 @@
 # Dedicated to lazy people =P
 # By Musickiller.
 #
-# License: you can only use and redistribute this one *ONLY* if you are lazy or if it is 24'th of August.
+# License: you can only use and redistribute this one *ONLY* if you
+# are lazy or if it is 24'th of August. And NEVER ask me how it works!
 
+# VARIABLES
 ME="${0##*/}"
 MYPATH="${0}"
 MY_HELP="\
 usage: ${ME} [options]
 
 options:
-    full - - - remove the whole configuration dirrectory
-    help - - - display help on a particular command
+    --full                      remove the whole configuration
+                                dirrectory, not just uninstaller's
+
+    --inst-dir  -d <dirrecory>  change installation dirrectory
+                                (default - /usr/local/bin)
+    --conf-dit  -c <dirrecory>  change uninstaller's data directory
+                                (default - ~/.config/kbmsgr/uninstall)
+    --help      -h              display help and exit
 "
-
-# set -x # DEBUG
-
-# VARIABLES
 CONF_DIR=~/.config/kbmsgr/uninstall
 INST_DIR=`cat $CONF_DIR/inst_dir.conf`
 FILES=`cat $CONF_DIR/files.conf`
 FULL=0
+
+# set -x # DEBUG
 #GIT_DIR=../src
 
 remove () {
@@ -53,23 +59,26 @@ remove () {
 	echo
 }
 
+
 # A BIG FUNCTION IS COMMING!!!!!
 show_help () { #BOOM!!!
 	echo "${MY_HELP}" #VERY BIG FUNCTION!!
 }
 
+
 # Checking for root access
 rooter () {
-	if [ "$(whoami)" != "root" ]
+	#echo "\n"
+	if [ -w $INST_DIR ]
 	then
-		echo "You must be a root user to run $0" 2>&1
-		echo
-		exit 1
+		echo "\nHave access to $INST_DIR"
+		remove
 	else
-		echo "$0 is being run as root, good."
-		remove "${@}"
+		echo "\nYou don't have access to $INST_DIR - aborting!\n" 2>&1
+		exit 1
 	fi
 }
+
 
 # A Mysterious Function!
 param_pam_pam () {
