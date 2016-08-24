@@ -22,19 +22,18 @@ GIT_DIR=../src
 install () {
 	echo "\nInstalling...\n"
 
-	# make a folder for installation data
+	# Make a folder for installation data
 	mkdir -p $CONF_DIR
 	
-	# list all files to install
-	FILES=`ls $GIT_DIR/kbmsgr*`
+	# List all files to install
+	FILES=`ls $GIT_DIR | grep kbmsgr`
 
-	# write the list (to know what to install)
+	# Write the list (to know what to install)
+	# ...and opy files.
 	for FILE in $FILES; do
 		echo "$FILE" >> $CONF_DIR/files.conf
+		cp -v $GIT_DIR/$FILE $INST_DIR
 	done 
-	
-	# Copy files.
-	cp -v $FILES $INST_DIR
 	
 	echo "\nDone!\n"
 }
