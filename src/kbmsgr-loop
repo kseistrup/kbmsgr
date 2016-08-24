@@ -77,14 +77,14 @@ loop_forever () {
 
   local mydate=0
   local theirdate=0
+  local index=0
   local mychanged
   local theirchanged
-  local index=0
-
-  spinner "${WHITE}" "${SPINNER[index]}"
 
   while :
   do
+    spinner "${WHITE}" "${SPINNER[index]}"
+
     mychanged=$(stat --format='%Y' "${myfile}")
     theirchanged=$(stat --format='%Y' "${theirfile}")
 
@@ -98,7 +98,6 @@ loop_forever () {
     }
     sleep "${delay}"
     index=$(((index + 1) % SPINNER_LEN))
-    spinner "${WHITE}" "${SPINNER[index]}"
   done
 }
 
