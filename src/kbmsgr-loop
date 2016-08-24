@@ -83,20 +83,19 @@ loop_forever () {
 
   while :
   do
-    spinner "${WHITE}" "${SPINNER[index]}"
-
     mychanged=$(stat --format='%Y' "${myfile}")
     theirchanged=$(stat --format='%Y' "${theirfile}")
 
     [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
-      spinner "${RED}" "${SPINNER[index]}"
-
       mydate="${mychanged}"
       theirdate="${theirchanged}"
 
+      spinner "${RED}" "${SPINNER[index]}"
       kbmsgr-read "${myfile}" "${theirfile}"
+      spinner "${RED}" "${SPINNER[index]}"
     }
     sleep "${delay}"
+    spinner "${WHITE}" "${SPINNER[index]}"
     index=$(((index + 1) % SPINNER_LEN))
   done
 }
