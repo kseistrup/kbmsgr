@@ -16,7 +16,7 @@ ME="${0##*/}"
 MY_APPNAME='kbmsgr-tui'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2016-08-24'
-MY_VERSION="0.0.2 (${MY_REVISION})"
+MY_VERSION="0.0.3 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-tui/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
@@ -64,9 +64,7 @@ start_tmux () {
 
   tmux ls | grep -q '^kbmsgr:' || {
     tmux new-session -d -s 'kbmsgr' -n 'kbmsgr' kbmsgr-loop "${myfile}" "${theirfile}"
-    # Make sure indices are 1-based
-    tmux set-option -t 'kbmsgr' base-index 1
-    tmux split-window -v -l 2 -t 1              kbmsgr-post "${myfile}"
+    tmux split-window -v -l 2                   kbmsgr-post "${myfile}"
   }
   exec tmux attach -t 'kbmsgr'
 }
