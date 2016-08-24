@@ -42,7 +42,7 @@ except ImportError as error:
     sys.exit(1)
 
 __author__ = 'Klaus Alexander Seistrup <klaus@seistrup.dk>'
-__revision__ = '2016-08-23'
+__revision__ = '2016-08-24'
 __version__ = '0.0.1 ({})'.format(__revision__)
 __copyright__ = """\
 kbmsgr-read {}
@@ -153,10 +153,10 @@ def showme(data, width=140):
         BRIGHT + WHITE, nick,  RESET,
         DIM,            when,  RESET
     )
-    print(header)
-    lines = textwrap.wrap(text, width=width)
-    for line in lines:
-        print('  {}'.format(line))
+    output = [header] + [
+        '  {}'.format(line) for line in textwrap.wrap(text, width=width)
+    ]
+    print('\n'.join(output))
 
 
 def main(progname='kbmsgr-read'):
