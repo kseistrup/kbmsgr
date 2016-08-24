@@ -41,6 +41,7 @@ SPINNER_LEN="${#SPINNER[@]}"
 
 RED=$(echo -e '\x1b[31m')
 GREEN=$(echo -e '\x1b[32m')
+WHITE=$(echo -e '\x1b[37m')
 
 die () {
   [[ -n "${1}" ]] && {
@@ -80,7 +81,7 @@ loop_forever () {
   local theirchanged
   local index=0
 
-  spinner "${GREEN}" "${SPINNER[index]}"
+  spinner "${WHITE}" "${SPINNER[index]}"
 
   while :
   do
@@ -95,9 +96,9 @@ loop_forever () {
 
       kbmsgr-read "${myfile}" "${theirfile}"
     }
-    spinner "${GREEN}" "${SPINNER[index]}"
-    index=$(((index + 1) % SPINNER_LEN))
     sleep "${delay}"
+    index=$(((index + 1) % SPINNER_LEN))
+    spinner "${WHITE}" "${SPINNER[index]}"
   done
 }
 
