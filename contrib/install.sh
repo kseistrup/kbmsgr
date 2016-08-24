@@ -25,6 +25,9 @@ install () {
 	# Make a folder for installation data
 	mkdir -p $CONF_DIR
 	
+	# Save installation parameters:
+	echo "$INST_DIR" > $CONF_DIR/inst_dir.conf
+	
 	# List all files to install
 	FILES=`ls $GIT_DIR | grep kbmsgr`
 
