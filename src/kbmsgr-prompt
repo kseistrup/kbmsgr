@@ -14,12 +14,12 @@ MY_PROMPT='text> '
 # more details.  <http://gplv3.fsf.org/>                                     #
 ##############################################################################
 
-MY_APPNAME='kbmsgr-post'
+MY_APPNAME='kbmsgr-prompt'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-24'
-MY_VERSION="0.0.1 (${MY_REVISION})"
+MY_REVISION='2016-08-26'
+MY_VERSION="0.1.0 (${MY_REVISION})"
 MY_COPYRIGHT="\
-kbmsgr-post/${MY_VERSION}
+kbmsgr-prompt/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
 
 This is free software; see the source for copying conditions.  There is no
