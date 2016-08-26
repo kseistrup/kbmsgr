@@ -17,7 +17,7 @@ MY_PROMPT='>>> '
 MY_APPNAME='kbmsgr-prompt'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2016-08-26'
-MY_VERSION="0.1.0 (${MY_REVISION})"
+MY_VERSION="0.1.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-prompt/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
@@ -77,7 +77,7 @@ my_post () {
   [[ -n "${message}" ]] && {
     [[ "${message}" == "." ]] && die
     kbmsgr-post "${myfile}" "${message}" && {
-      printf '\x1b[2m%s\x1b[0m' "${message}"
+      printf '\x1b[2m%s\x1b[0m\n' "${message}"
     }
   }
 }
