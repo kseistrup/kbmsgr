@@ -11,6 +11,7 @@ storage-medium.
 * Bash (tested with v4.3.46)
   * tmux (tested with v2.2)
   * stat (from coreutils)
+  * lockfile (from procmail)
 * Python 3 (tested with v3.5.2)
   * [python-dateutil](https://pypi.python.org/pypi/python-dateutil/)
   * [humanize](https://pypi.python.org/pypi/humanize/)
