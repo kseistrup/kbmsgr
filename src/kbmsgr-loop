@@ -15,7 +15,7 @@ ME="${0##*/}"
 
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-25'
+MY_REVISION='2016-08-26'
 MY_VERSION="0.1.2 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
@@ -39,9 +39,7 @@ options:
 SPINNER=(◐ ◓ ◑ ◒)
 SPINNER_LEN="${#SPINNER[@]}"
 
-#RED=$(echo -e '\x1b[31m')
-#GREEN=$(echo -e '\x1b[32m')
-WHITE=$(echo -e '\x1b[37m')
+WHITE=$(printf '\x1b[37m')
 
 die () {
   [[ -n "${1}" ]] && {
@@ -93,7 +91,7 @@ loop_forever () {
 
   while :
   do
-    for i in {59..2}
+    for i in {59..1}
     do
       mychanged=$(stat --format='%Y' "${myfile}")
       theirchanged=$(stat --format='%Y' "${theirfile}")
@@ -104,15 +102,15 @@ loop_forever () {
 
         goto 0 0
         kbmsgr-read "${myfile}" "${theirfile}"
+	continue
       }
       index=$((i % SPINNER_LEN))
       spinner "${WHITE}" "${SPINNER[index]}" "${i}"
       sleep 1
     done
-    spinner "${WHITE}" "${SPINNER[1]}" 1
-    sleep 1
     goto 0 0
     kbmsgr-read "${myfile}" "${theirfile}"
+    sleep 1
   done
 }
 

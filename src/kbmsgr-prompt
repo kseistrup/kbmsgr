@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- mode: sh; coding: utf-8 -*-
 ME="${0##*/}"
-MY_PROMPT='text> '
+MY_PROMPT='>>> '
 ##############################################################################
 # This program is free software; you can redistribute it and/or modify it    #
 # under the terms of the GNU General Public License as published by the Free #
@@ -43,11 +43,14 @@ die () {
     echo "${ME}:" "${@}" >&2
     rc=1
   }
+  exit "${rc}"
+}
+
+kill_tmux () {
   # Kill entire session if it exists
   tmux ls | grep -q '^kbmsgr:' && {
     tmux kill-session -t 'kbmsgr' || :
   }
-  exit "${rc}"
 }
 
 my_help () {
@@ -62,45 +65,20 @@ my_copyright () {
   echo "${MY_COPYRIGHT}"
 }
 
-my_ruler () {
-  local ruler=''
-  local length=8
-  local ten='----+----|'
-  local maxlen="${COLUMNS:-140}"
-  [[ ${maxlen} -gt 140 ]] && maxlen=140
-  while [[ ${length} -lt $((maxlen-10)) ]]
-  do
-    ruler="${ruler}${ten}"
-    length="${#ruler}"
-  done
-  clear
-  printf '      %s\n' "${ruler}"
-}
-
 my_post () {
   local myfile="${1}"
-  local message=''
-  local utcnow
+  local message
+  local cr
 
-  my_ruler
-  read -r -e -p "${MY_PROMPT}" -i "${message}" message
+  cr=$(printf '\r')
 
-  while :
-  do
-    read -n1 -r -e -p "$(printf 'Post \x1b[1m[\x1b[0m%s\x1b[1m]\x1b[0m? [Y]es/[N]o/[E]dit: ' "${message}")" answer
-    case "${answer}" in
-      y | Y ) break ;;
-      n | N ) return ;;
-      e | E )
-        my_ruler
-        read -r -e -p "${MY_PROMPT}" -i "${message}" message
-      ;;
-    esac
-  done
+  read -r -e -p "${cr}${MY_PROMPT}" -i "${message}" message
+
   [[ -n "${message}" ]] && {
-    utcnow=$(date --utc '+%Y-%m-%dT%H:%M:%SZ')
-    printf '%s\t%s\n' "${utcnow}" "${message}" >> "${myfile}" \
-    && echo "${message}"
+    [[ "${message}" == "." ]] && die
+    kbmsgr-post "${myfile}" "${message}" && {
+      printf '\x1b[2m%s\x1b[0m' "${message}"
+    }
   }
 }
 
@@ -127,24 +105,17 @@ main () {
 
   [[ -z "${myfile}" ]] && die "missing positional argument: MYFILE"
 
+  clear
+  echo "Press ^C to exit when you're all done"
+
   while :
   do
-    clear
-    read -n1 -r -e -p 'Press any key to continue (Q to quit): ' answer
-    case "${answer}" in
-      q | Q )
-        echo 'Quit!'
-        die
-      ;;
-      * )
-        : pass
-      ;;
-    esac
     my_post "${myfile}"
   done
 }
 
+trap 'kill_tmux' EXIT SIGQUIT SIGTERM
 main "${@}"
+die
 
-:
 # eof
