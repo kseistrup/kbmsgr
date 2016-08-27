@@ -15,8 +15,8 @@ ME="${0##*/}"
 
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-26'
-MY_VERSION="0.1.2 (${MY_REVISION})"
+MY_REVISION='2016-08-27'
+MY_VERSION="0.1.3 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
@@ -88,20 +88,32 @@ loop_forever () {
   local index
   local mychanged
   local theirchanged
+  local changed=false
 
   while :
   do
     for i in {59..1}
     do
-      mychanged=$(stat --format='%Y' "${myfile}")
-      theirchanged=$(stat --format='%Y' "${theirfile}")
+      # Check my file at even seconds and their file at odd seconds
 
-      [[ ("${mychanged}" > "${mydate}") || ("${theirchanged}" > "${theirdate}") ]] && {
-        mydate="${mychanged}"
-        theirdate="${theirchanged}"
-
+      if [[ $((i % 2)) -eq 0 ]]
+      then
+        mychanged=$(stat --format='%Y' "${myfile}")
+	[[ ("${mychanged}" > "${mydate}") ]] && {
+	  mydate="${mychanged}"
+	  changed=true
+	}
+      else
+        theirchanged=$(stat --format='%Y' "${theirfile}")
+	[[ ("${theirchanged}" > "${theirdate}") ]] && {
+	  theirdate="${theirchanged}"
+	  changed=true
+        }
+      fi
+      [[ "${changed}" == "true" ]] && {
         goto 0 0
         kbmsgr-read "${myfile}" "${theirfile}"
+	changed=false
 	continue
       }
       index=$((i % SPINNER_LEN))
