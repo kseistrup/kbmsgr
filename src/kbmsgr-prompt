@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- mode: sh; coding: utf-8 -*-
 ME="${0##*/}"
-MY_PROMPT='>>> '
+MY_PROMPT='➤ '
 ##############################################################################
 # This program is free software; you can redistribute it and/or modify it    #
 # under the terms of the GNU General Public License as published by the Free #
@@ -68,10 +68,12 @@ my_copyright () {
 my_post () {
   local myfile="${1}"
   local message
-  local cr
+  local columns="${COLUMNS:-80}"
 
-  #cr=$(printf '\r')
+  [[ ${columns} -lt  25 ]] && columns=25
+  [[ ${columns} -gt 100 ]] && columns=100
 
+  stty columns ${columns}
   read -r -e -p "${MY_PROMPT}" -i "${message}" message
 
   [[ -n "${message}" ]] && {
