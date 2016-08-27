@@ -70,9 +70,9 @@ my_post () {
   local message
   local cr
 
-  cr=$(printf '\r')
+  #cr=$(printf '\r')
 
-  read -r -e -p "${cr}${MY_PROMPT}" -i "${message}" message
+  read -r -e -p "${MY_PROMPT}" -i "${message}" message
 
   [[ -n "${message}" ]] && {
     [[ "${message}" == "." ]] && die
