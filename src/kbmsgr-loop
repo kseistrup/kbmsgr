@@ -97,6 +97,7 @@ loop_forever () {
   do
     goto 0 0
     kbmsgr-read "${myfile}" "${theirfile}"
+    spinner "${WHITE}" "${SPINNER[0]}" 60
     sleep 1
 
     for i in {59..1}
