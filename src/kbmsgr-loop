@@ -16,7 +16,7 @@ ME="${0##*/}"
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2016-08-27'
-MY_VERSION="0.1.5 (${MY_REVISION})"
+MY_VERSION="0.1.6 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
@@ -65,11 +65,8 @@ spinner () {
   local colour="${1}"
   local char="${2}"
   local seconds="${3}"
-  local plur='s'
 
-  [[ ${seconds} -eq 1 ]] && plur=''
-
-  printf '\x1b[K\x1b[%s%s\x1b[0m \x1b[2m[\x1b[0mNext update in %s second%s\x1b[2m]\x1b[0m\r' "${colour}" "${char}" "${seconds}" "${plur}"
+  printf '\x1b[K\x1b[%s%s\x1b[0m \x1b[2m[\x1b[0mNext update in %s\x1b[2m]\x1b[0m\r' "${colour}" "${char}" "${seconds}"
 }
 
 goto () {
@@ -97,10 +94,10 @@ loop_forever () {
   do
     goto 0 0
     kbmsgr-read "${myfile}" "${theirfile}"
-    spinner "${WHITE}" "${SPINNER[0]}" 60
+    spinner "${WHITE}" "${SPINNER[0]}" '1 minute'
     sleep 1
 
-    for i in {59..1}
+    for i in {59..2}
     do
       # Check my file at even seconds and their file at odd seconds
 
@@ -124,9 +121,11 @@ loop_forever () {
 	changed=false
       }
       index=$((i % SPINNER_LEN))
-      spinner "${WHITE}" "${SPINNER[index]}" "${i}"
+      spinner "${WHITE}" "${SPINNER[index]}" "${i} seconds"
       sleep 1
     done
+    spinner "${WHITE}" "${SPINNER[1]}" "1 second"
+    sleep 1
   done
 }
 
