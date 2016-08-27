@@ -42,8 +42,8 @@ except ImportError as error:
     sys.exit(1)
 
 __author__ = 'Klaus Alexander Seistrup <klaus@seistrup.dk>'
-__revision__ = '2016-08-24'
-__version__ = '0.0.1 ({})'.format(__revision__)
+__revision__ = '2016-08-27'
+__version__ = '0.1.0 ({})'.format(__revision__)
 __copyright__ = """\
 kbmsgr-read {}
 Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
@@ -183,7 +183,10 @@ def main(progname='kbmsgr-read'):
     counter = 0
     messages = []
     numlines = min(int(os.environ.get('LINES', '999')) / 2, 999) + 1
-    numcols = min(int(os.environ.get('COLUMNS', '140')), 140) - 2
+    numcols = min(int(os.environ.get('COLUMNS', '100')), 100) - 2
+
+    if numcols < 23:
+        die('terminal is too narrow, please give me at least 25 characters.')
 
     now = datetime.datetime.now(datetime.timezone.utc)
     delta = datetime.timedelta(seconds=864/2)
