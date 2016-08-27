@@ -16,8 +16,8 @@ MY_PROMPT='➤ '
 
 MY_APPNAME='kbmsgr-prompt'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-26'
-MY_VERSION="0.1.1 (${MY_REVISION})"
+MY_REVISION='2016-08-27'
+MY_VERSION="0.1.2 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-prompt/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
