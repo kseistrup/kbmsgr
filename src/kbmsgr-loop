@@ -16,7 +16,7 @@ ME="${0##*/}"
 MY_APPNAME='kbmsgr-loop'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2016-08-27'
-MY_VERSION="0.1.4 (${MY_REVISION})"
+MY_VERSION="0.1.5 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-loop/${MY_VERSION}
 Copyright © 2016 ${MY_AUTHOR}
@@ -83,15 +83,22 @@ loop_forever () {
   local myfile="${1}"
   local theirfile="${2}"
 
-  local mydate=0
-  local theirdate=0
+  local mydate
+  local theirdate
   local index
   local mychanged
   local theirchanged
   local changed=false
 
+  mydate=$(stat --format='%Y' "${myfile}")
+  theirdate=$(stat --format='%Y' "${theirfile}")
+
   while :
   do
+    goto 0 0
+    kbmsgr-read "${myfile}" "${theirfile}"
+    sleep 1
+
     for i in {59..1}
     do
       # Check my file at even seconds and their file at odd seconds
@@ -119,9 +126,6 @@ loop_forever () {
       spinner "${WHITE}" "${SPINNER[index]}" "${i}"
       sleep 1
     done
-    goto 0 0
-    kbmsgr-read "${myfile}" "${theirfile}"
-    sleep 1
   done
 }
 
