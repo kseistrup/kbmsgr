@@ -1,0 +1,3 @@
+[submodule "contrib/kbmsgr-install-scripts"]
+	path = contrib/kbmsgr-install-scripts
+	url = https://github.com/Musickiller/kbmsgr-install-scripts.git
