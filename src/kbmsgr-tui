@@ -63,8 +63,8 @@ start_tmux () {
   local theirfile="${2}"
 
   tmux ls | grep -q '^kbmsgr:' || {
-    tmux new-session -d -s 'kbmsgr' -n 'kbmsgr' kbmsgr-loop   "${myfile}" "${theirfile}"
-    tmux split-window -v -l 3                   kbmsgr-prompt "${myfile}"
+    tmux new-session -d -s 'kbmsgr' -n 'kbmsgr' "kbmsgr-loop   ${myfile} ${theirfile}"
+    tmux split-window -v -l 3                   "kbmsgr-prompt ${myfile}"
   }
   exec tmux attach -t 'kbmsgr'
 }
