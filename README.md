@@ -8,8 +8,8 @@ storage-medium.
 
 ## Requirements
 
-* Bash (tested with v4.3.46)
-  * tmux 2 (tested with v2.2+)
+* Bash (tested with v4.3.46, v4.4.5)
+  * tmux 1.9+  (tested with v1.9, v2.2+)
   * stat (from coreutils)
   * lockfile (from procmail)
 * Python 3 (tested with v3.5.2+)
