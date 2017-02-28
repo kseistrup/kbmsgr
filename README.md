@@ -9,7 +9,7 @@ storage-medium.
 ## Requirements
 
 * Keybase
-* Bash (tested with v4.3.46, v4.4.5)
+* Bash (tested with v4.3, v4.4)
   * awk
   * lockfile (from procmail)
   * stat (from coreutils)
