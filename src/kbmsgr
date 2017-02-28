@@ -18,26 +18,33 @@ SUBDIR='messages'
 
 MY_APPNAME='kbmsgr'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2016-08-26'
-MY_VERSION="0.1.0 (${MY_REVISION})"
+MY_REVISION='2017-02-28'
+MY_VERSION="0.2.0 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr/${MY_VERSION}
-Copyright © 2016 ${MY_AUTHOR}
+Copyright © 2016,2017 ${MY_AUTHOR}
 
 This is free software; see the source for copying conditions.  There is no
 warranty; not even for merchantability or fitness for a particular purpose.\
 "
 MY_HELP="\
-usage: ${ME} [OPTIONS] <SELF> <OTHER>
+usage: ${ME} [OPTIONS] <OTHER>
 
 positional arguments:
-  SELF              your keybase username
-  OTHER             recipient's keybase username
+  OTHER                recipient's keybase username
 
 options:
-  -h, --help        display this help and exit
-  -v, --version     output version information and exit
-  -c, --copyright   show copying policy and exit\
+  -h, --help           display this help and exit
+  -v, --version        output version information and exit
+  -c, --copyright      show copying policy and exit
+  -r, --requirements   show required components\
+"
+MY_REQUIREMENTS="\
+keybase
+awk
+lockfile
+stat
+tmux\
 "
 
 die () {
@@ -60,12 +67,50 @@ my_copyright () {
   echo "${MY_COPYRIGHT}"
 }
 
+get_username () {
+  local status="${*}"
+  local username
+  local loggedin
+
+  # We're screwed here if keybase is localized…
+
+  # Look for "Username: $self"
+  username=$(
+    echo "${status}" | awk '/^Username:/ { print $2 }'
+  )
+  [[ -z "${username}" ]] && {
+    die 'cannot determine your username'
+  }
+
+  # Look for "Logged in: yes|no"
+  loggedin=$(
+    echo "${status}" | awk '/^Logged in:/ { print $3 }'
+  )
+  [[ "${loggedin}" == "yes" ]] || {
+    die 'please make sure keybase is running and that you are logged in'
+  }
+
+  echo "${username}"
+}
+
+check_requirements () {
+  local requirement
+
+  for requirement in ${MY_REQUIREMENTS}
+  do
+    which "${requirement}" >/dev/null 2>&1 || {
+      die "requirement not found: ${requirement}"
+    }
+  done
+}
+
 main () {
   local tui="${MYPATH}-tui"
-  local self="${1}"
-  local other="${2}"
+  local other="${1}"
   local kbroot="${KBROOT}"
+  local status
   local msgdir
+  local self
 
   case "${1}" in
     -h | --help )
@@ -80,13 +125,25 @@ main () {
       my_copyright
       die
     ;;
+    -r | --requirements )
+      echo "${MY_REQUIREMENTS}"
+      die
+    ;;
     -* )
       die "unrecognized option ‘${1}’"
     ;;
   esac
 
+  check_requirements
+
+  [[ "${#}" -gt 1 ]] && {
+    die "this version of ${ME} only takes one argument: OTHER"
+  }
+  status="$(keybase status)"
+  self="$(get_username "${status}")"
+
+  [[ -z "${self}" ]] && die 'cannot determine your username'
   [[ -z "${other}" ]] && die 'missing positional argument: OTHER'
-  [[ -z "${self}" ]] && die 'missing positional argument: SELF'
 
   [[ -d "${kbroot}" ]] || die "no such directory: ${kbroot}"
 
