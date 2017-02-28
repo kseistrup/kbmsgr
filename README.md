@@ -8,10 +8,12 @@ storage-medium.
 
 ## Requirements
 
+* Keybase
 * Bash (tested with v4.3.46, v4.4.5)
-  * tmux 1.9+  (tested with v1.9, v2.2+)
-  * stat (from coreutils)
+  * awk
   * lockfile (from procmail)
+  * stat (from coreutils)
+  * tmux 1.9+  (tested with v1.9, v2.2+)
 * Python 3 (tested with v3.5.2+)
   * [python-dateutil](https://pypi.python.org/pypi/python-dateutil/)
   * [humanize](https://pypi.python.org/pypi/humanize/)
@@ -24,7 +26,7 @@ directory somewhere in your $PATH, then launch `kbmsgr`
 (`/keybase` should be mounted, of course):
 
 ```sh
-$ kbmsgr ${my_keybase_username} ${their_keybase_username}
+$ kbmsgr ${their_keybase_username}
 ```
 
 ## Caveat
