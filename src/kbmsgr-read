@@ -46,7 +46,7 @@ __revision__ = '2016-08-27'
 __version__ = '0.1.0 ({})'.format(__revision__)
 __copyright__ = """\
 kbmsgr-read {}
-Copyright © 2016 Klaus Alexander Seistrup <klaus@seistrup.dk>
+Copyright © 2016,2017 Klaus Alexander Seistrup <klaus@seistrup.dk>
 
 This is free software; see the source for copying conditions.  There is no
 warranty; not even for merchantability or fitness for a particular purpose.\

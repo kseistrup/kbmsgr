@@ -19,7 +19,7 @@ MY_REVISION='2017-01-20'
 MY_VERSION="0.1.2 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr-tui/${MY_VERSION}
-Copyright © 2016-2017 ${MY_AUTHOR}
+Copyright © 2016,2017 ${MY_AUTHOR}
 
 This is free software; see the source for copying conditions.  There is no
 warranty; not even for merchantability or fitness for a particular purpose.\
