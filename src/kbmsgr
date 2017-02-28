@@ -19,7 +19,7 @@ SUBDIR='messages'
 MY_APPNAME='kbmsgr'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
 MY_REVISION='2017-02-28'
-MY_VERSION="0.2.0 (${MY_REVISION})"
+MY_VERSION="0.2.1 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr/${MY_VERSION}
 Copyright © 2016,2017 ${MY_AUTHOR}
@@ -37,7 +37,7 @@ options:
   -h, --help           display this help and exit
   -v, --version        output version information and exit
   -c, --copyright      show copying policy and exit
-  -r, --requirements   show required components\
+  -r, --requirements   show required components and exit\
 "
 MY_REQUIREMENTS="\
 keybase
