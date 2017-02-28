@@ -9,12 +9,12 @@ storage-medium.
 ## Requirements
 
 * Keybase
-* Bash (tested with v4.3, v4.4)
-  * awk
+* Bash (tested with v4.3+)
+  * awk (tested with GNU Awk 4.1)
   * lockfile (from procmail)
   * stat (from coreutils)
   * tmux 1.9+  (tested with v1.9, v2.2+)
-* Python 3 (tested with v3.5.2+)
+* Python 3 (tested with v3.5+)
   * [python-dateutil](https://pypi.python.org/pypi/python-dateutil/)
   * [humanize](https://pypi.python.org/pypi/humanize/)
 
