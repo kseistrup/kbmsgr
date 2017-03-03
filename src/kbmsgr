@@ -18,8 +18,8 @@ SUBDIR='messages'
 
 MY_APPNAME='kbmsgr'
 MY_AUTHOR='Klaus Alexander Seistrup <klaus@seistrup.dk>'
-MY_REVISION='2017-02-28'
-MY_VERSION="0.2.1 (${MY_REVISION})"
+MY_REVISION='2017-03-02'
+MY_VERSION="0.2.2 (${MY_REVISION})"
 MY_COPYRIGHT="\
 kbmsgr/${MY_VERSION}
 Copyright © 2016,2017 ${MY_AUTHOR}
@@ -144,6 +144,7 @@ main () {
 
   [[ -z "${self}" ]] && die 'cannot determine your username'
   [[ -z "${other}" ]] && die 'missing positional argument: OTHER'
+  [[ "${self}" == "${other}" ]] && die "you don't need ${ME} to talk to yourself"
 
   [[ -d "${kbroot}" ]] || die "no such directory: ${kbroot}"
 
